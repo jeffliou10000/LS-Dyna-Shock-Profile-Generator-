@@ -1,0 +1,35 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from math import sin, pi
+
+
+wave_type = input('Please enter wave type ("hs" for half-sine / "sq" for square): ')
+g_peak = float(input('Please enter peak value of G:(ex.20) '))
+duration = int(input('Please enter duration in ms:(ex.7) '))
+endtime = float(input('Please enter end time in ms:(ex.21) '))
+
+duration_in_ms = duration/1000
+endtime_in_ms = endtime*10**(-3)
+acc = 9810
+
+if wave_type == 'hs':
+    time = np.linspace(0, duration_in_ms, duration*10+1)
+    g_table = []
+    time_table = []
+    for t in time:
+        g = f'{g_peak*acc*sin((pi/duration_in_ms)*t):.2f}'
+        g_table.append(g)
+        time_table.append(f'{t:.4f}')
+    time_table.append(endtime_in_ms)
+    g_table.append(0)
+else:
+    time_table = [0, 0, duration_in_ms, duration_in_ms, endtime_in_ms]
+    g_table = [0, g_peak*acc, g_peak*acc, 0, 0]
+
+
+
+s = pd.Series(g_table, index=time_table)
+print(s)
+
+s.to_excel('./curve.xlsx', index=True)
